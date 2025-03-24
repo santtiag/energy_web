@@ -1,0 +1,53 @@
+.welcomeContainer {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.welcomeTitle {
+    text-align: center;
+    color: #1e293b;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+}
+
+.cardGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.featureCard {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.featureCard:hover {
+    transform: translateY(-5px);
+}
+
+.featureCard h2 {
+    color: #2563eb;
+    margin-bottom: 1rem;
+}
+
+.featureCard p {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+}
+
+.cardLink {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cardLink:hover {
+    text-decoration: underline;
+}
