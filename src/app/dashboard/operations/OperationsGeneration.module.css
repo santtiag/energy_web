@@ -1,0 +1,250 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.addButton {
+    background: #2563eb;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.addButton:hover {
+    opacity: 0.9;
+}
+
+.comparisonContainer {
+    display: grid;
+    gap: 2rem;
+}
+
+.comparisonBlock {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 2px solid #e2e8f0;
+}
+
+.blockHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.removeButton {
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.controlsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.controlGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.controlGroup label {
+    font-weight: 500;
+    color: #475569;
+}
+
+.controlGroup select, 
+.controlGroup input {
+    padding: 0.8rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.fetchButton {
+    grid-column: 1 / -1;
+    background: #2563eb;
+    color: white;
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.fetchButton:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+.resultsCard {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+}
+
+.controlsContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 2rem;
+}
+
+.selectionPanel {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.operationButtons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.operationButton {
+    padding: 8px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.operationButton.active {
+    border-color: #2563eb;
+    background-color: #eff6ff;
+    color: #2563eb;
+}
+
+.dateControls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.dateGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dateGroup label {
+    font-weight: 500;
+    color: #475569;
+}
+
+.dateGroup input {
+    padding: 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+}
+
+.resultsContainer {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.operationCard {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+}
+
+.cardTitle {
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.valuesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.valueItem {
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.valueHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.valueLabel {
+    font-weight: 500;
+    color: #2563eb;
+}
+
+.valueUnit {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1e293b;
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.timeStamp {
+    font-size: 0.85rem;
+    color: #64748b;
+    text-align: center;
+}
+
+.loadingSpinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #e2e8f0;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 2rem auto;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.noData {
+    text-align: center;
+    color: #64748b;
+    padding: 2rem;
+}

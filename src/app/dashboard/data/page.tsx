@@ -27,6 +27,14 @@ const DataGeneration = () => {
     const indicators = ['voltage', 'current', 'active_power', 'reactive_power', 'power_factor'];
     const blocks = ['blq_a', 'blq_f'];
     const values = ['value_1', 'value_2', 'value_3'];
+    
+    const indicatorUnits: { [key: string]: string } = {
+        voltage: 'V',
+        current: 'A',
+        active_power: 'W',
+        reactive_power: 'VAr',
+        power_factor: ''
+    };
 
     const fetchData = async () => {
         try {
@@ -53,9 +61,9 @@ const DataGeneration = () => {
 
             const processedData = response.data.map((item: any) => ({
                 time: new Date(item.time).toLocaleDateString('es-ES', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    }),
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }),
                 value_1: item.value_1,
                 value_2: item.value_2,
                 value_3: item.value_3
@@ -184,7 +192,11 @@ const DataGeneration = () => {
                                 textAnchor="end"
                                 tick={{ fontSize: 12 }}
                             ></XAxis>
-                            <YAxis domain={['auto', 'auto']} ></YAxis>
+                            <YAxis domain={['auto', 'auto']}
+                                unit={indicatorUnits[selectedIndicator]}
+                                width={80}  // Ajusta según necesidad
+                                tickFormatter={(value) => `${value}`}
+                            ></YAxis>
                             <Tooltip></Tooltip>
                             <Legend></Legend>
                             {selectedValues.map((value, index) => (
