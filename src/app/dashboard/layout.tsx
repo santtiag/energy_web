@@ -19,6 +19,7 @@ export default function DashboardLayout({
                     <Link href="/dashboard/data" className={styles.navLink}>Data</Link>
                     <Link href="/dashboard/operations" className={styles.navLink}>Operations</Link>
                     <Link href="/dashboard/analysis" className={styles.navLink}>Analysis</Link>
+                    <Link href="/dashboard/upload" className={styles.navLink}>Upload</Link>
                 </nav>
 
                 <main className={styles.mainContent}>
