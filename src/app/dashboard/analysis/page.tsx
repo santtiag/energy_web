@@ -77,7 +77,7 @@ const AnalysisGenerations = () => {
             });
             let url = `http://localhost:5000/api/analysis/${selectedAlgorithm}/`;
             
-            const params: any = {
+            const params = {
                 start_date: dateRange.start,
                 end_date: dateRange.end,
                 resolution,
@@ -85,22 +85,25 @@ const AnalysisGenerations = () => {
                 table_name: selectedBlock,
                 ...parameters[selectedAlgorithm as keyof typeof parameters]
             };
-
+    
             const response = await axios.get(url, { params });
-            const processedData = response.data.map((item: any) => ({
-                time: new Date(item.time).toLocaleTimeString(),
-                // Aplanar los objetos
-                ...Object.entries(item.original).reduce((acc, [key, value]) => {
-                  acc[`original_${key}`] = value;
-                  return acc;
-                }, {} as Record<string, any>),
-                ...Object.entries(item.smoothed).reduce((acc, [key, value]) => {
-                  acc[`smoothed_${key}`] = value;
-                  return acc;
-                }, {} as Record<string, any>)
-              }));
-
+            
+            const processedData = response.data.map((item) => {
+                const date = new Date(item.time);
+                return {
+                    time: date.toLocaleTimeString(),
+                    // Usamos las mismas keys que se usan en la renderización del gráfico
+                    original_value_1: item.original.value_1,
+                    original_value_2: item.original.value_2,
+                    original_value_3: item.original.value_3,
+                    smoothed_value_1: item.smoothed.value_1,
+                    smoothed_value_2: item.smoothed.value_2,
+                    smoothed_value_3: item.smoothed.value_3
+                };
+            });
+    
             setData(processedData);
+            console.log('Datos procesados:', processedData);
         } catch (error) {
             console.error('Error fetching smoother data:', error);
         } finally {
