@@ -49,7 +49,7 @@ const DataGeneration = () => {
             //    }
             //}
             setLoading(true);
-            const response = await axios.get('http://localhost:5000/api/data/', {
+            const response = await axios.get('http://https://964d-181-130-216-77.ngrok-free.app/api/data/', {
                 params: {
                     start_date: dateRange.start,
                     end_date: dateRange.end,

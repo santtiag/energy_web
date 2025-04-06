@@ -20,8 +20,8 @@ export default function UploadComponent() {
     try {
       setIsLoading(true);
       const endpoint = selectedBlock === 'A' 
-        ? 'http://localhost:5000/api/upload_blq_a' 
-        : 'http://localhost:5000/api/upload_blq_f';
+        ? 'https://964d-181-130-216-77.ngrok-free.app/api/upload_blq_a' 
+        : 'https://964d-181-130-216-77.ngrok-free.app/api/upload_blq_f';
 
       const response = await fetch(endpoint, {
         method: 'POST',

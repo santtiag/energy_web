@@ -46,7 +46,7 @@ const OperationsGeneration = () => {
 
         try {
             const response = await axios.get(
-                `http://localhost:5000/api/operations/${block.operation}/`, {
+                `http://https://964d-181-130-216-77.ngrok-free.app/api/operations/${block.operation}/`, {
                 params: {
                     start_date: block.startDate,
                     end_date: block.endDate,
