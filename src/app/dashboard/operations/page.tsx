@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import styles from './OperationsGeneration.module.css';
 
@@ -34,7 +34,7 @@ const OperationsGeneration = () => {
     const [loading, setLoading] = useState<{ [key: number]: boolean }>({});
 
     const indicators = ['voltage', 'current', 'active_power', 'reactive_power', 'power_factor'];
-    const blocks = ['blq_a', 'blq_b', 'blq_c', 'blq_d', 'blq_e', 'blq_f'];
+    const blocks = ['blq_a', 'blq_f'];
     const operations = [
         { value: 'maximus', label: 'Máximos' },
         { value: 'lows', label: 'Mínimos' },

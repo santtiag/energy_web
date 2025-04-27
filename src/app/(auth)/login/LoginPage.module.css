@@ -1,0 +1,76 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f8fafc;
+    padding: 20px;
+}
+
+.loginCard {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 400px;
+}
+
+.loginCard h2 {
+    text-align: center;
+    color: #1e293b;
+    margin-bottom: 20px;
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.formGroup label {
+    margin-bottom: 8px;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.formGroup input {
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.formGroup input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.submitButton {
+    background-color: #1e293b;
+    color: #ffffff;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.submitButton:hover {
+    background-color: #1d4ed8;
+}
+
+.error {
+    font-weight: bold;
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 8px;
+    text-align: center;
+}

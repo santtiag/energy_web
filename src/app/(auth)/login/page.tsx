@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import styles from './LoginPage.module.css';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -28,7 +29,7 @@ export default function LoginPage() {
                 login(data.token);
             } else {
                 const errorData = await response.json();
-                setError(errorData.message || 'Error en el inicio de sesión');
+                setError(errorData.message || 'Invalid credentials');
             }
         } catch (err) {
             setError('No se pudo conectar con el servidor');
@@ -36,37 +37,37 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="container">
-      <div className="login-card">
-        <h2>Login</h2>
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input               id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="correo@cecar.edu.co"
-            />
-          </div>
+        <div className={styles.container}>
+            <div className={styles.loginCard}>
+                <h2>Login</h2>
+                <form onSubmit={handleSubmit} className={styles.loginForm}>
+                    <div className={styles.formGroup}>
+                        <label htmlFor="email">Email</label>
+                        <input id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            placeholder="correo@cecar.edu.co"
+                        />
+                    </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Contraseña</label>
-            <input               id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-            />
-          </div>
+                    <div className={styles.formGroup}>
+                        <label htmlFor="password">Contraseña</label>
+                        <input id="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            placeholder="••••••••"
+                        />
+                    </div>
 
-          <button type="submit">Iniciar Sesión</button>
+                    <button className={styles.submitButton} type="submit">Iniciar Sesión</button>
 
-          {error && <p className="error">{error}</p>}
-        </form>
-      </div>
-    </div>
+                    {error && <p className={styles.error}>{error}</p>}
+                </form>
+            </div>
+        </div>
     );
-} 
+}

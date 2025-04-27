@@ -20,15 +20,34 @@ const AnalysisGenerations = () => {
     const [resolution, setResolution] = useState('minute');
     const [selectedValue, setSelectedValue] = useState('1');
     const [dateRange, setDateRange] = useState({
-        start: '2025-01-01',
-        end: '2025-01-02'
+        start: '2025-04-01',
+        end: '2025-04-01'
     });
 
     const colors = {
         original: '#2563eb',  // Azul
-        smoothed: '#7c3aed'   // Morado
+        // smoothed: '#7c3aed'   // Morado
+        smoothed: 'red'   // Morado
+
     };
-    
+
+    const convertTimeToMinutes = (time: string) => {
+        const [hours, minutes] = time.split(':').map(Number);
+        return hours * 60 + minutes;
+    };
+
+    const convertMinutesToTime = (minutes: number) => {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+    };
+
+    const [timeRange, setTimeRange] = useState({
+        startHour: '00:00',
+        endHour: '23:59'
+    });
+
+
 
     const algorithms = [
         { value: 'kalman', label: 'Filtro de Kalman' },
@@ -61,6 +80,8 @@ const AnalysisGenerations = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
+            const startDateTime = `${dateRange.start}T${timeRange.startHour}:00`;
+            const endDateTime = `${dateRange.end}T${timeRange.endHour}:00`;
             let url = `http://localhost:5000/api/analysis/${selectedAlgorithm}/`;
 
             const algorithmParams = {
@@ -70,8 +91,8 @@ const AnalysisGenerations = () => {
             }[selectedAlgorithm];
 
             const params = {
-                start_date: dateRange.start,
-                end_date: dateRange.end,
+                start_date: startDateTime,
+                end_date: endDateTime,
                 resolution,
                 indicator: selectedIndicator,
                 table_name: selectedBlock,
@@ -79,7 +100,7 @@ const AnalysisGenerations = () => {
                 ...algorithmParams
             };
 
-            
+
             const response = await axios.get(url, { params });
 
             const processedData = response.data.map((item: any) => ({
@@ -88,8 +109,8 @@ const AnalysisGenerations = () => {
                 [`smoothed_${selectedIndicator}_${selectedValue}`]: item.smoothed[`value_${selectedValue}`]
             }));
 
-            
-            
+
+
             setData(processedData);
         } catch (error) {
             console.error('Error fetching smoother data:', error);
@@ -99,7 +120,7 @@ const AnalysisGenerations = () => {
     };
     useEffect(() => {
         fetchData();
-    }, [ selectedAlgorithm, selectedBlock, selectedIndicator, resolution, dateRange, selectedValue, kalmanParams, savParams, whitParams]);
+    }, [selectedAlgorithm, selectedBlock, selectedIndicator, resolution, dateRange, selectedValue, kalmanParams, savParams, whitParams, timeRange.startHour, timeRange.endHour]);
 
 
     useEffect(() => {
@@ -113,69 +134,69 @@ const AnalysisGenerations = () => {
         switch (selectedAlgorithm) {
             case 'kalman':
                 return (
-                <div className={styles.parameterGroup}>
-                    <h4>Parámetros Kalman</h4>
-                    <div className={styles.parameterGrid}>
-                        {Object.entries(kalmanParams).map(([key, value]) => (
-                            <div key={key} className={styles.parameterItem}>
-                                <label>{key.replace('_', ' ').toUpperCase()}</label>
-                                <input 
-                                    type="number" 
-                                    value={value}
-                                    onChange={(e) => {
-                                        const newParams = {...kalmanParams};
-                                        newParams[key] = parseFloat(e.target.value);
-                                        setKalmanParams(newParams);
-                                    }}
-                                />
-                            </div>
-                        ))}
+                    <div className={styles.parameterGroup}>
+                        <h4>Parámetros Kalman</h4>
+                        <div className={styles.parameterGrid}>
+                            {Object.entries(kalmanParams).map(([key, value]) => (
+                                <div key={key} className={styles.parameterItem}>
+                                    <label>{key.replace('_', ' ').toUpperCase()}</label>
+                                    <input
+                                        type="number"
+                                        value={value}
+                                        onChange={(e) => {
+                                            const newParams = { ...kalmanParams };
+                                            newParams[key] = parseFloat(e.target.value);
+                                            setKalmanParams(newParams);
+                                        }}
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
                 );
             case 'savitzky_golay':
                 return (
-                <div className={styles.parameterGroup}>
-                    <h4>Parámetros Savitzky-Golay</h4>
-                    <div className={styles.parameterGrid}>
-                        {Object.entries(savParams).map(([key, value]) => (
-                            <div key={key} className={styles.parameterItem}>
-                                <label>{key.replace('_', ' ').toUpperCase()}</label>
-                                <input 
-                                    type="number" 
-                                    value={value}
-                                    onChange={(e) => {
-                                        const newParams = {...savParams};
-                                        newParams[key] = parseFloat(e.target.value);
-                                        setSavParams(newParams);
-                                    }}
-                                />
-                            </div>
-                        ))}
+                    <div className={styles.parameterGroup}>
+                        <h4>Parámetros Savitzky-Golay</h4>
+                        <div className={styles.parameterGrid}>
+                            {Object.entries(savParams).map(([key, value]) => (
+                                <div key={key} className={styles.parameterItem}>
+                                    <label>{key.replace('_', ' ').toUpperCase()}</label>
+                                    <input
+                                        type="number"
+                                        value={value}
+                                        onChange={(e) => {
+                                            const newParams = { ...savParams };
+                                            newParams[key] = parseFloat(e.target.value);
+                                            setSavParams(newParams);
+                                        }}
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
                 );
             case 'whittacker':
                 return (
-                <div className={styles.parameterGroup}>
-                    <h4>Parámetros Whittaker</h4>
-                    <div className={styles.parameterGrid}>
-                        {Object.entries(whitParams).map(([key, value]) => (
-                            <div key={key} className={styles.parameterItem}>
-                                <label>{key.toUpperCase()}</label>
-                                <input 
-                                    type="number" 
-                                    value={value}
-                                    onChange={(e) => {
-                                        const newParams = {...whitParams};
-                                        newParams[key] = parseFloat(e.target.value);
-                                        setWhitParams(newParams);
-                                    }}
-                                />
-                            </div>
-                        ))}
+                    <div className={styles.parameterGroup}>
+                        <h4>Parámetros Whittaker</h4>
+                        <div className={styles.parameterGrid}>
+                            {Object.entries(whitParams).map(([key, value]) => (
+                                <div key={key} className={styles.parameterItem}>
+                                    <label>{key.toUpperCase()}</label>
+                                    <input
+                                        type="number"
+                                        value={value}
+                                        onChange={(e) => {
+                                            const newParams = { ...whitParams };
+                                            newParams[key] = parseFloat(e.target.value);
+                                            setWhitParams(newParams);
+                                        }}
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
                 );
             default:
                 return null;
@@ -231,7 +252,7 @@ const AnalysisGenerations = () => {
 
                     <div className={styles.controlGroup}>
                         <label>Valor</label>
-                        <select 
+                        <select
                             value={selectedValue}
                             onChange={(e) => setSelectedValue(e.target.value)}
                         >
@@ -264,22 +285,59 @@ const AnalysisGenerations = () => {
                 </div>
             </div>
 
+            <div className={styles.timeRangeControls}>
+                <div className="form-group">
+                    <label className="form-label">Hora Inicio</label>
+                    <input
+                        type="time"
+                        className="form-input"
+                        value={timeRange.startHour}
+                        onChange={(e) => setTimeRange(prev => ({ ...prev, startHour: e.target.value }))}
+                    />
+                </div>
+                <div className="form-group">
+                    <label className="form-label">Hora Fin</label>
+                    <input
+                        type="time"
+                        className="form-input"
+                        value={timeRange.endHour}
+                        onChange={(e) => setTimeRange(prev => ({ ...prev, endHour: e.target.value }))}
+                        min={timeRange.startHour}
+                    />
+                </div>
+                {/* Opcional: Agregar un deslizador visual */}
+                <input
+                    type="range"
+                    min="0"
+                    max="1439"
+                    value={convertTimeToMinutes(timeRange.startHour)}
+                    onChange={(e) => setTimeRange(prev => ({ ...prev, startHour: convertMinutesToTime(parseInt(e.target.value)) }))}
+                />
+                <input
+                    type="range"
+                    min="0"
+                    max="1439"
+                    value={convertTimeToMinutes(timeRange.endHour)}
+                    onChange={(e) => setTimeRange(prev => ({ ...prev, endHour: convertMinutesToTime(parseInt(e.target.value)) }))}
+                />
+            </div >
+
             <div className={styles.chartContainer}>
                 {loading ? (
                     <div className={styles.loading}>Cargando datos...</div>
                 ) : (
                     <ResponsiveContainer width="100%" height={500}>
-                        <LineChart 
+                        <LineChart
                             data={data}
-                            margin={{top: 50}}
+                            margin={{ top: 50 }}
                         >
-                        <Legend 
-                            verticalAlign="top"
-                            wrapperStyle={{ 
-                                lineHeight: '24px', 
-                                textAlign: 'center' 
-                            }}
-                        ></Legend>
+                            <Legend
+                                verticalAlign="top"
+                                wrapperStyle={{
+                                    lineHeight: '24px',
+                                    textAlign: 'center'
+                                }}
+                            ></Legend>
                             <CartesianGrid strokeDasharray="3 3" ></CartesianGrid>
                             <XAxis
                                 dataKey="time"
@@ -291,26 +349,28 @@ const AnalysisGenerations = () => {
                                 domain={['auto', 'auto']}
                             ></YAxis>
                             <Tooltip></Tooltip>
-                        {/* Línea Original */}
-                        <Line                             type="monotone"
-                            dataKey={`original_${selectedIndicator}_${selectedValue}`}
-                            stroke={colors.original}
-                            name={`Original ${selectedIndicator.replace('_', ' ')} ${selectedValue}`}
-                            dot={false}
-                        ></Line>
-                        
-                        {/* Línea Suavizada */}
-                        <Line                             type="monotone"
-                            dataKey={`smoothed_${selectedIndicator}_${selectedValue}`}
-                            stroke={colors.smoothed}
-                            name={`Suavizado ${selectedIndicator.replace('_', ' ')} ${selectedValue}`}
-                            strokeDasharray="5 5"
-                            dot={false}
-                        ></Line>
+                            {/* Línea Original */}
+                            <Line type="monotone"
+                                dataKey={`original_${selectedIndicator}_${selectedValue}`}
+                                stroke={colors.original}
+                                name={`Original ${selectedIndicator.replace('_', ' ')} ${selectedValue}`}
+                                dot={false}
+                            ></Line>
+
+                            {/* Línea Suavizada */}
+                            <Line type="monotone"
+                                dataKey={`smoothed_${selectedIndicator}_${selectedValue}`}
+                                stroke={colors.smoothed}
+                                name={`Suavizado ${selectedIndicator.replace('_', ' ')} ${selectedValue}`}
+                                strokeDasharray="5 5"
+                                dot={false}
+                            ></Line>
                         </LineChart>
                     </ResponsiveContainer>
                 )}
             </div>
+
+
         </div>
     );
 };

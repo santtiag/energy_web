@@ -20,14 +20,14 @@ const DataGeneration = () => {
     const [selectedBlock, setSelectedBlock] = useState('blq_a');
     const [resolution, setResolution] = useState<'minute' | 'hour'>('minute');
     const [dateRange, setDateRange] = useState({
-        start: '2025-01-01',
-        end: '2025-01-02'
+        start: '2025-04-01',
+        end: '2025-04-01'
     });
 
     const indicators = ['voltage', 'current', 'active_power', 'reactive_power', 'power_factor'];
     const blocks = ['blq_a', 'blq_f'];
     const values = ['value_1', 'value_2', 'value_3'];
-    
+
     const indicatorUnits: { [key: string]: string } = {
         voltage: 'V',
         current: 'A',
@@ -36,23 +36,32 @@ const DataGeneration = () => {
         power_factor: ''
     };
 
+    const convertTimeToMinutes = (time: string) => {
+        const [hours, minutes] = time.split(':').map(Number);
+        return hours * 60 + minutes;
+    };
+
+    const convertMinutesToTime = (minutes: number) => {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+    };
+
+    const [timeRange, setTimeRange] = useState({
+        startHour: '00:00',
+        endHour: '23:59'
+    });
+
     const fetchData = async () => {
         try {
-            //if (resolution === 'minute') {
-            //    const start = new Date(dateRange.start);
-            //    const end = new Date(dateRange.end);
-            //    const diffDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-            //
-            //    if (diffDays > 3) {
-            //        alert('Rango máximo para resolución minutal: 3 días');
-            //        return;
-            //    }
-            //}
             setLoading(true);
+            const startDateTime = `${dateRange.start}T${timeRange.startHour}:00`;
+            const endDateTime = `${dateRange.end}T${timeRange.endHour}:00`;
+
             const response = await axios.get('http://localhost:5000/api/data/', {
                 params: {
-                    start_date: dateRange.start,
-                    end_date: dateRange.end,
+                    start_date: startDateTime,
+                    end_date: endDateTime,
                     resolution: resolution,
                     indicator: selectedIndicator,
                     table_name: selectedBlock
@@ -79,7 +88,7 @@ const DataGeneration = () => {
 
     useEffect(() => {
         fetchData();
-    }, [dateRange.start, dateRange.end, selectedIndicator, selectedBlock, selectedValues, resolution]);
+    }, [dateRange.start, dateRange.end, selectedIndicator, selectedBlock, selectedValues, resolution, timeRange.startHour, timeRange.endHour]);
 
     const generateLineColors = () => {
         const colors = ['#2563eb', '#dc2626', '#16a34a'];
@@ -179,6 +188,42 @@ const DataGeneration = () => {
                     />
                 </div>
             </div>
+            <div className={styles.timeRangeControls}>
+                <div className="form-group">
+                    <label className="form-label">Hora Inicio</label>
+                    <input
+                        type="time"
+                        className="form-input"
+                        value={timeRange.startHour}
+                        onChange={(e) => setTimeRange(prev => ({ ...prev, startHour: e.target.value }))}
+                    />
+                </div>
+                <div className="form-group">
+                    <label className="form-label">Hora Fin</label>
+                    <input
+                        type="time"
+                        className="form-input"
+                        value={timeRange.endHour}
+                        onChange={(e) => setTimeRange(prev => ({ ...prev, endHour: e.target.value }))}
+                        min={timeRange.startHour}
+                    />
+                </div>
+                {/* Opcional: Agregar un deslizador visual */}
+                <input
+                    type="range"
+                    min="0"
+                    max="1439"
+                    value={convertTimeToMinutes(timeRange.startHour)}
+                    onChange={(e) => setTimeRange(prev => ({ ...prev, startHour: convertMinutesToTime(parseInt(e.target.value)) }))}
+                />
+                <input
+                    type="range"
+                    min="0"
+                    max="1439"
+                    value={convertTimeToMinutes(timeRange.endHour)}
+                    onChange={(e) => setTimeRange(prev => ({ ...prev, endHour: convertMinutesToTime(parseInt(e.target.value)) }))}
+                />
+            </div >
             <div className="chart-container">
                 {loading ? (
                     <div className={styles.loadingSpinner}></div>
@@ -186,6 +231,15 @@ const DataGeneration = () => {
                     <ResponsiveContainer width="100%" height={500}>
                         <LineChart data={chartData}>
                             <CartesianGrid strokeDasharray="3 3" ></CartesianGrid>
+                            <Legend
+                                verticalAlign="top"
+                                wrapperStyle={{
+                                    lineHeight: '24px',
+                                    textAlign: 'center'
+                                }}
+                            ></Legend>
+
+                            <Legend></Legend>
                             <XAxis
                                 dataKey="time"
                                 angle={-45}
@@ -198,7 +252,6 @@ const DataGeneration = () => {
                                 tickFormatter={(value) => `${value}`}
                             ></YAxis>
                             <Tooltip></Tooltip>
-                            <Legend></Legend>
                             {selectedValues.map((value, index) => (
                                 <Line key={value}
                                     type="monotone"
@@ -212,8 +265,9 @@ const DataGeneration = () => {
                     </ResponsiveContainer>
                 )}
             </div>
+
         </div >
+
     );
 };
-
 export default DataGeneration;

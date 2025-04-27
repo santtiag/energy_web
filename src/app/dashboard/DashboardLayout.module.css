@@ -92,3 +92,26 @@
         transform: rotate(360deg);
     }
 }
+
+.navButton {
+    font-size: 1.1rem;
+    /* font-weight: bold; */
+    color: red;
+    display: block;
+    padding: 12px 16px;
+    margin: 8px 0;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.3s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.navButton:hover {
+    background: #334155;
+    /* color: #ffffff; */
+    color: #94a3b8;
+}
