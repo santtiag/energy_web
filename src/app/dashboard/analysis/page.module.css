@@ -1,0 +1,34 @@
+.analysisContainer {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.analysisContainer h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.analysisLinks {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.analysisLinks li {
+    margin-bottom: 10px;
+}
+
+.analysisLinks a {
+    text-decoration: none;
+    color: #337ab7;
+    transition: color 0.2s ease;
+}
+
+.analysisLinks a:hover {
+    color: #23527c;
+}

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import styles from './OperationsGeneration.module.css';
+import { API_URL, BLOCKS, DEFAULT_DATE_RANGE, INDICATORS } from '@/lib/constants';
 
 interface OperationData {
     [key: string]: string | number;
@@ -23,18 +24,18 @@ const OperationsGeneration = () => {
     const [comparisonBlocks, setComparisonBlocks] = useState<ComparisonBlock[]>([
         {
             id: Date.now(),
-            block: 'blq_a',
-            indicator: 'power_factor',
+            block: BLOCKS[0],
+            indicator: INDICATORS[0],
             operation: 'maximus',
-            startDate: '2025-01-01',
-            endDate: '2025-01-02'
+            startDate:  DEFAULT_DATE_RANGE['start'],
+            endDate: DEFAULT_DATE_RANGE['end']
         }
     ]);
 
     const [loading, setLoading] = useState<{ [key: number]: boolean }>({});
 
-    const indicators = ['voltage', 'current', 'active_power', 'reactive_power', 'power_factor'];
-    const blocks = ['blq_a', 'blq_f'];
+    const indicators = INDICATORS;
+    const blocks = BLOCKS;
     const operations = [
         { value: 'maximus', label: 'Máximos' },
         { value: 'lows', label: 'Mínimos' },
@@ -46,7 +47,7 @@ const OperationsGeneration = () => {
 
         try {
             const response = await axios.get(
-                `http://localhost:5000/api/operations/${block.operation}/`, {
+                `${API_URL}/operations/${block.operation}/`, {
                 params: {
                     start_date: block.startDate,
                     end_date: block.endDate,
@@ -70,8 +71,8 @@ const OperationsGeneration = () => {
     const addComparisonBlock = () => {
         const newBlock: ComparisonBlock = {
             id: Date.now(),
-            block: 'blq_a',
-            indicator: 'power_factor',
+            block: BLOCKS[0],
+            indicator: INDICATORS[0],
             operation: 'maximus',
             startDate: comparisonBlocks[0].startDate,
             endDate: comparisonBlocks[0].endDate

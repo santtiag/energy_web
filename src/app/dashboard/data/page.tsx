@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 import styles from './DataGeneration.module.css';
+import { API_URL, BLOCKS, DEFAULT_DATE_RANGE, INDICATOR_UNITS, INDICATORS, RESOLUTIONS, VALUES } from '@/lib/constants';
+import { convertTimeToMinutes, convertMinutesToTime } from '../../../lib/utils';
 
 interface ChartData {
     time: string;
@@ -13,44 +15,23 @@ interface ChartData {
 }
 
 const DataGeneration = () => {
-    const [chartData, setChartData] = useState<ChartData[]>([]);
+    const [data, setData] = useState<ChartData[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedValues, setSelectedValues] = useState<string[]>(['value_1', 'value_2', 'value_3']);
-    const [selectedIndicator, setSelectedIndicator] = useState('power_factor');
-    const [selectedBlock, setSelectedBlock] = useState('blq_a');
-    const [resolution, setResolution] = useState<'minute' | 'hour'>('minute');
-    const [dateRange, setDateRange] = useState({
-        start: '2025-04-01',
-        end: '2025-04-01'
-    });
-
-    const indicators = ['voltage', 'current', 'active_power', 'reactive_power', 'power_factor'];
-    const blocks = ['blq_a', 'blq_f'];
-    const values = ['value_1', 'value_2', 'value_3'];
-
-    const indicatorUnits: { [key: string]: string } = {
-        voltage: 'V',
-        current: 'A',
-        active_power: 'W',
-        reactive_power: 'VAr',
-        power_factor: ''
-    };
-
-    const convertTimeToMinutes = (time: string) => {
-        const [hours, minutes] = time.split(':').map(Number);
-        return hours * 60 + minutes;
-    };
-
-    const convertMinutesToTime = (minutes: number) => {
-        const hours = Math.floor(minutes / 60);
-        const mins = minutes % 60;
-        return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
-    };
-
+    const [selectedValues, setSelectedValues] = useState<string[]>(VALUES);
+    const [selectedIndicator, setSelectedIndicator] = useState(INDICATORS[0]);
+    const [selectedBlock, setSelectedBlock] = useState(BLOCKS[0]);
+    const [resolution, setResolution] = useState(RESOLUTIONS[0]);
+    const [dateRange, setDateRange] = useState(DEFAULT_DATE_RANGE);
     const [timeRange, setTimeRange] = useState({
         startHour: '00:00',
         endHour: '23:59'
     });
+
+    const indicators = INDICATORS;
+    const blocks = BLOCKS;
+    const values = VALUES;
+
+    const indicatorUnits: { [key: string]: string } = INDICATOR_UNITS;
 
     const fetchData = async () => {
         try {
@@ -58,7 +39,7 @@ const DataGeneration = () => {
             const startDateTime = `${dateRange.start}T${timeRange.startHour}:00`;
             const endDateTime = `${dateRange.end}T${timeRange.endHour}:00`;
 
-            const response = await axios.get('http://localhost:5000/api/data/', {
+            const response = await axios.get(`${API_URL}/data/`, {
                 params: {
                     start_date: startDateTime,
                     end_date: endDateTime,
@@ -78,9 +59,9 @@ const DataGeneration = () => {
                 value_3: item.value_3
             }));
 
-            setChartData(processedData);
+            setData(processedData);
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('Error fetching :', error);
         } finally {
             setLoading(false);
         }
@@ -229,7 +210,9 @@ const DataGeneration = () => {
                     <div className={styles.loadingSpinner}></div>
                 ) : (
                     <ResponsiveContainer width="100%" height={500}>
-                        <LineChart data={chartData}>
+                        <LineChart data={data}
+                            margin={{ top: 20, bottom: 30 }}
+                        >
                             <CartesianGrid strokeDasharray="3 3" ></CartesianGrid>
                             <Legend
                                 verticalAlign="top"
