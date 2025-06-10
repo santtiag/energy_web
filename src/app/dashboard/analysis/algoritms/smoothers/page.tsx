@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 import styles from './AnalysisGenerations.module.css';
@@ -16,12 +16,22 @@ interface SmootherData {
 const AnalysisGenerations = () => {
     const [data, setData] = useState<SmootherData[]>([]);
     const [loading, setLoading] = useState(false);
+    const [intervalValue, setIntervalValue] = useState(1);
     const [selectedAlgorithm, setSelectedAlgorithm] = useState('kalman');
     const [selectedBlock, setSelectedBlock] = useState(BLOCKS[0]);
     const [selectedIndicator, setSelectedIndicator] = useState(INDICATORS[0]);
     const [resolution, setResolution] = useState(RESOLUTIONS[0]);
     const [selectedValue, setSelectedValue] = useState('1');
     const [dateRange, setDateRange] = useState(DEFAULT_DATE_RANGE);
+    const [isSingleDay, setIsSingleDay] = useState(true); // Nuevo estado para detectar si es solo un día
+
+
+    // Detección de rango de un solo día
+    useEffect(() => {
+        setIsSingleDay(dateRange.start === dateRange.end);
+    }, [dateRange]);
+
+
     const [timeRange, setTimeRange] = useState({
         startHour: '00:00',
         endHour: '23:59'
@@ -33,16 +43,13 @@ const AnalysisGenerations = () => {
 
     };
 
-    const indicatorUnits: { [key: string]: string } = INDICATOR_UNITS;
 
+    // INFO: ALGORITHMS SMOOTHER
     const algorithms = [
-        { value: 'kalman', label: 'Filtro de Kalman' },
-        { value: 'savitzky_golay', label: 'Savitzky-Golay' },
+        { value: 'kalman', label: 'Kalman' },
+        { value: 'savitzky_golay', label: 'Savitzky Golay' },
         { value: 'whittacker', label: 'Whittaker' }
     ];
-
-    const indicators = INDICATORS;
-    const blocks = BLOCKS;
 
     const [kalmanParams, setKalmanParams] = useState({
         initial_error: 1,
@@ -52,8 +59,6 @@ const AnalysisGenerations = () => {
         observation_matrix: 1
     });
 
-    const [showOriginalLine, setShowOriginalLine] = useState(true);
-    const [showSmoothedLine, setShowSmoothedLine] = useState(true);
 
     const [savParams, setSavParams] = useState({
         window_length: 11,
@@ -64,6 +69,24 @@ const AnalysisGenerations = () => {
         lmbd: 100,
         d: 2
     });
+
+    const [showOriginalLine, setShowOriginalLine] = useState(true);
+    const [showSmoothedLine, setShowSmoothedLine] = useState(true);
+
+    // Formateador del eje X dinámico
+    const formatXAxisTick = useCallback((dateStr: string) => {
+        const date = new Date(dateStr);
+
+        if (isSingleDay) {
+            return date.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+        } else {
+            return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+        }
+    }, [isSingleDay]);
 
 
     const fetchData = async () => {
@@ -93,12 +116,12 @@ const AnalysisGenerations = () => {
             const response = await axios.get(url, { params });
 
             const processedData = response.data.map((item: any) => ({
-                time: new Date(item.time).toLocaleTimeString(),
+                // time: new Date(item.time).toLocaleTimeString(),
+                time: item.time, // Almacenar el timestamp completo
+
                 [`original_${selectedIndicator}_${selectedValue}`]: item.original[`value_${selectedValue}`],
                 [`smoothed_${selectedIndicator}_${selectedValue}`]: item.smoothed[`value_${selectedValue}`]
             }));
-
-
 
             setData(processedData);
         } catch (error) {
@@ -107,17 +130,25 @@ const AnalysisGenerations = () => {
             setLoading(false);
         }
     };
+
+
+    useEffect(() => {
+        setIsSingleDay(dateRange.start === dateRange.end);
+        if (!isSingleDay) {
+            const start = new Date(dateRange.start);
+            const end = new Date(dateRange.end);
+            const dayDifference = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+            setIntervalValue(dayDifference);
+        } else {
+            setIntervalValue(1);
+        }
+    }, [dateRange]);
+
+
     useEffect(() => {
         fetchData();
     }, [selectedAlgorithm, selectedBlock, selectedIndicator, resolution, dateRange, selectedValue, kalmanParams, savParams, whitParams, timeRange.startHour, timeRange.endHour]);
 
-
-    useEffect(() => {
-        if (data.length > 0) {
-            console.log('Datos procesados:', data);
-            console.log('Primer elemento:', data[0]);
-        }
-    }, [data]);
 
     const renderParameterInputs = () => {
         switch (selectedAlgorithm) {
@@ -195,7 +226,77 @@ const AnalysisGenerations = () => {
     return (
         <div className={styles.container}>
             <div className={styles.controlsContainer}>
-                <div className={styles.mainControls}>
+                {/* Columna 1 */}
+
+                <div className={styles.column1}>
+                    <div className={styles.controlGroup}>
+                        <label>Bloque</label>
+                        <select value={selectedBlock}
+                            onChange={(e) => setSelectedBlock(e.target.value)}
+                        >
+                            {BLOCKS.map(block => (
+                                <option key={block} value={block}>{block.toUpperCase()}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className={styles.controlGroup}>
+                        <label>Indicador</label>
+                        <select value={selectedIndicator}
+                            onChange={(e) => setSelectedIndicator(e.target.value)}
+                        >
+                            {INDICATORS.map(ind => (
+                                <option key={ind} value={ind}>{ind.replace('_', ' ')}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className={styles.controlGroup}>
+                        <label>Resolución</label>
+                        <select value={resolution}
+                            onChange={(e) => setResolution(e.target.value)}
+                        >
+                            <option value="minute">Minutal</option>
+                            <option value="hour">Horaria</option>
+                        </select>
+                    </div>
+                    <div className={styles.controlGroup}>
+                        <label>Fase</label>
+                        <select
+                            value={selectedValue}
+                            onChange={(e) => setSelectedValue(e.target.value)}
+                        >
+                            <option value="1">Fase 1</option>
+                            <option value="2">Fase 2</option>
+                            <option value="3">Fase 3</option>
+                        </select>
+                    </div>
+
+                    <div className={styles.controlGroup}>
+                        <label className={styles.checkboxLabel}>
+                            <input
+                                type="checkbox"
+                                checked={showOriginalLine}
+                                onChange={() => setShowOriginalLine(!showOriginalLine)}
+                            />
+                            Datos originales
+                        </label>
+                    </div>
+                    <div className={styles.controlGroup}>
+                        <label className={styles.checkboxLabel}>
+                            <input
+                                type="checkbox"
+                                checked={showSmoothedLine}
+                                onChange={() => setShowSmoothedLine(!showSmoothedLine)}
+                            />
+                            Datos suavizados
+                        </label>
+                    </div>
+
+                </div>
+
+
+
+                {/* Columna 2 - Algoritmo y Parámetros */}
+                <div className={styles.column2}>
                     <div className={styles.controlGroup}>
                         <label>Algoritmo</label>
                         <select value={selectedAlgorithm}
@@ -206,133 +307,84 @@ const AnalysisGenerations = () => {
                             ))}
                         </select>
                     </div>
-
-                    <div className={styles.controlGroup}>
-                        <label>Bloque</label>
-                        <select value={selectedBlock}
-                            onChange={(e) => setSelectedBlock(e.target.value)}
-                        >
-                            {blocks.map(block => (
-                                <option key={block} value={block}>{block.toUpperCase()}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className={styles.controlGroup}>
-                        <label>Indicador</label>
-                        <select value={selectedIndicator}
-                            onChange={(e) => setSelectedIndicator(e.target.value)}
-                        >
-                            {indicators.map(ind => (
-                                <option key={ind} value={ind}>{ind.replace('_', ' ')}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className={styles.controlGroup}>
-                        <label>Resolución</label>
-                        <select value={resolution}
-                            onChange={(e) => setResolution(e.target.value)}
-                        >
-                            <option value="minute">Minutal</option>
-                            <option value="hour">Horaria</option>
-                        </select>
-                    </div>
-
-                    <div className={styles.controlGroup}>
-                        <label>Valor</label>
-                        <select
-                            value={selectedValue}
-                            onChange={(e) => setSelectedValue(e.target.value)}
-                        >
-                            <option value="1">Valor 1</option>
-                            <option value="2">Valor 2</option>
-                            <option value="3">Valor 3</option>
-                        </select>
-                    </div>
-
+                    {renderParameterInputs()}
                 </div>
 
-                {renderParameterInputs()}
 
-                <div className={styles.dateControls}>
-                    <div className={styles.controlGroup}>
-                        <label>Fecha Inicio</label>
-                        <input type="date"
-                            value={dateRange.start}
-                            onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
+
+                {/* Columna 3 - Fechas, Horas y Opciones de Visualización */}
+                <div className={styles.column3}>
+                    <div className={styles.dateControls}>
+                        <div className={styles.controlGroup}>
+                            <label>Fecha Inicio</label>
+                            <input type="date"
+                                value={dateRange.start}
+                                onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
+                            />
+                        </div>
+                        <div className={styles.controlGroup}>
+                            <label>Fecha Fin</label>
+                            <input type="date"
+                                value={dateRange.end}
+                                onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
+                            />
+                        </div>
+                    </div>
+
+                    <div className={styles.timeRangeControls}>
+                        <div className="form-group">
+                            <label className="form-label">Hora Inicio</label>
+                            <input
+                                type="time"
+                                className="form-input"
+                                value={timeRange.startHour}
+                                onChange={(e) => setTimeRange(prev => ({ ...prev, startHour: e.target.value }))}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label className="form-label">Hora Fin</label>
+                            <input
+                                type="time"
+                                className="form-input"
+                                value={timeRange.endHour}
+                                onChange={(e) => setTimeRange(prev => ({ ...prev, endHour: e.target.value }))}
+                                min={timeRange.startHour}
+                            />
+                        </div>
+
+                        {/* Opcional: Agregar un deslizador visual */}
+                        <input
+                            type="range"
+                            min="0"
+                            max="1439"
+                            value={convertTimeToMinutes(timeRange.startHour)}
+                            onChange={(e) => setTimeRange(prev => ({ ...prev, startHour: convertMinutesToTime(parseInt(e.target.value)) }))}
+                        />
+                        <input
+                            type="range"
+                            min="0"
+                            max="1439"
+                            value={convertTimeToMinutes(timeRange.endHour)}
+                            onChange={(e) => setTimeRange(prev => ({ ...prev, endHour: convertMinutesToTime(parseInt(e.target.value)) }))}
                         />
                     </div>
-
                     <div className={styles.controlGroup}>
-                        <label>Fecha Fin</label>
-                        <input type="date"
-                            value={dateRange.end}
-                            onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
+                        <label>Intervalo (Días múltiples)</label>
+                        <input
+                            type="number"
+                            min="1"
+                            value={intervalValue + 1}
+                            onChange={e => setIntervalValue(parseInt(e.target.value))}
+                            disabled={isSingleDay}
                         />
                     </div>
                 </div>
             </div>
 
-            <div className={styles.timeRangeControls}>
-                <div className="form-group">
-                    <label className="form-label">Hora Inicio</label>
-                    <input
-                        type="time"
-                        className="form-input"
-                        value={timeRange.startHour}
-                        onChange={(e) => setTimeRange(prev => ({ ...prev, startHour: e.target.value }))}
-                    />
-                </div>
-                <div className="form-group">
-                    <label className="form-label">Hora Fin</label>
-                    <input
-                        type="time"
-                        className="form-input"
-                        value={timeRange.endHour}
-                        onChange={(e) => setTimeRange(prev => ({ ...prev, endHour: e.target.value }))}
-                        min={timeRange.startHour}
-                    />
-                </div>
-                {/* Opcional: Agregar un deslizador visual */}
-                <input
-                    type="range"
-                    min="0"
-                    max="1439"
-                    value={convertTimeToMinutes(timeRange.startHour)}
-                    onChange={(e) => setTimeRange(prev => ({ ...prev, startHour: convertMinutesToTime(parseInt(e.target.value)) }))}
-                />
-                <input
-                    type="range"
-                    min="0"
-                    max="1439"
-                    value={convertTimeToMinutes(timeRange.endHour)}
-                    onChange={(e) => setTimeRange(prev => ({ ...prev, endHour: convertMinutesToTime(parseInt(e.target.value)) }))}
-                />
-            </div >
 
 
-            <div className={styles.controlGroup}>
-                <label>
-                    <input
-                        type="checkbox"
-                        checked={showOriginalLine}
-                        onChange={() => setShowOriginalLine(!showOriginalLine)}
-                    />
-                    Mostrar datos originales
-                </label>
-            </div>
 
-            <div className={styles.controlGroup}>
-                <label>
-                    <input
-                        type="checkbox"
-                        checked={showSmoothedLine}
-                        onChange={() => setShowSmoothedLine(!showSmoothedLine)}
-                    />
-                    Mostrar datos suavizados
-                </label>
-            </div>
+            {/* Graph */}
             <div className={styles.chartContainer}>
                 {loading ? (
                     <div className={styles.loading}>Cargando datos...</div>
@@ -349,20 +401,24 @@ const AnalysisGenerations = () => {
                                     textAlign: 'center'
                                 }}
                             ></Legend>
-                            <CartesianGrid strokeDasharray="3 3" ></CartesianGrid>
+                            <CartesianGrid strokeDasharray="3 3" />
                             <XAxis
+                                domain={['auto', 'auto']}
                                 dataKey="time"
                                 angle={-45}
+                                tickFormatter={formatXAxisTick}
+                                textAnchor={isSingleDay ? 'end' : 'middle'}
+                                interval={isSingleDay ? 38 : Math.ceil(data.length / intervalValue)} // Reducir densidad de etiquetas en múltiples días
                                 tick={{ fontSize: 12 }}
-                                textAnchor='end'
                             ></XAxis>
                             <YAxis
                                 domain={['auto', 'auto']}
-                                unit={indicatorUnits[selectedIndicator]}
+                                unit={INDICATOR_UNITS[selectedIndicator]}
                                 width={80}
                                 tickFormatter={(value) => `${value}`}
                             ></YAxis>
                             <Tooltip></Tooltip>
+
                             {/* Línea Original */}
                             {showOriginalLine && (
                                 <Line type="monotone"
@@ -372,6 +428,7 @@ const AnalysisGenerations = () => {
                                     dot={false}
                                 ></Line>
                             )}
+
                             {/* Línea Suavizada */}
                             {showSmoothedLine && (
                                 <Line type="monotone"
