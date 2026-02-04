@@ -1,4 +1,4 @@
-.dataContainer {
+.manipulationContainer {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
@@ -23,7 +23,7 @@
     text-align: center;
 }
 
-.dataLinks {
+.manipulationLinks {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -33,11 +33,11 @@
     gap: 1rem;
 }
 
-.dataLinks li {
+.manipulationLinks li {
     margin: 0;
 }
 
-.dataLinks a {
+.manipulationLinks a {
     text-decoration: none;
     color: #60a5fa;
     transition: all 0.3s ease;
@@ -51,11 +51,11 @@
     align-items: center;
 }
 
-.dataLinks a:hover {
+.manipulationLinks a:hover {
     background: rgba(96, 165, 250, 0.15);
     transform: translateY(-2px);
 }
 
-.dataLinks a svg {
+.manipulationLinks a svg {
     margin-right: 0.5rem;
 }

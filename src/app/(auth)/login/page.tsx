@@ -8,6 +8,7 @@ export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const { isAuthenticated, login } = useAuth();
     const router = useRouter();
 
@@ -17,6 +18,9 @@ export default function LoginPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
+        setError('');
+        
         try {
             const response = await fetch('http://localhost:5000/api/auth/login', {
             // const response = await fetch('https://dedd-177-255-28-124.ngrok-free.app/api/auth/login', {
@@ -31,9 +35,11 @@ export default function LoginPage() {
             } else {
                 const errorData = await response.json();
                 setError(errorData.message || 'Invalid credentials');
+                setIsLoading(false);
             }
         } catch (err) {
             setError('No se pudo conectar con el servidor');
+            setIsLoading(false);
         }
     };
 
@@ -64,7 +70,17 @@ export default function LoginPage() {
                         />
                     </div>
 
-                    <button className={styles.submitButton} type="submit">Iniciar Sesión</button>
+                    <button 
+                        className={styles.submitButton} 
+                        type="submit" 
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <div className={styles.loadingSpinner}></div>
+                        ) : (
+                            'Iniciar Sesión'
+                        )}
+                    </button>
 
                     {error && <p className={styles.error}>{error}</p>}
                 </form>

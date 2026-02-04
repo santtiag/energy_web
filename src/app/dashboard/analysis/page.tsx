@@ -1,20 +1,16 @@
-import Link from 'next/link';
-import styles from './page.module.css';
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const AnalysisPage = () => {
-    return (
-        <div className={styles.analysisContainer}>
-            <h1>Generación de Análisis</h1>
-            <ul className={styles.analysisLinks}>
-                <li>
-                    <Link href="/dashboard/analysis/artificial-intelligence">Inteligencia Artificial</Link>
-                </li>
-                <li>
-                    <Link href="/dashboard/analysis/algoritms">Algoritmos</Link>
-                </li>
-            </ul>
-        </div>
-    );
+    const router = useRouter();
+
+    useEffect(() => {
+        router.replace('/dashboard/analysis/smoothers');
+    }, [router]);
+
+    return null;
 };
 
 export default AnalysisPage;

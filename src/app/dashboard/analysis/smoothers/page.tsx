@@ -1,19 +1,17 @@
 'use client';
-
 import { useState, useEffect, useCallback } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
-import styles from './AnalysisGenerations.module.css';
-import { API_URL, RESOLUTIONS, INDICATORS, BLOCKS, INDICATOR_UNITS, DEFAULT_DATE_RANGE } from '../../../../../lib/constants';
-import { convertTimeToMinutes, convertMinutesToTime } from '../../../../../lib/utils';
+import styles from './Smoothers.module.css';
+import { API_URL, RESOLUTIONS, INDICATORS, BLOCKS, INDICATOR_UNITS, DEFAULT_DATE_RANGE } from '../../../../lib/constants';
+import { convertTimeToMinutes, convertMinutesToTime } from '../../../../lib/utils';
 
-// Cambiar la interfaz a:
 interface SmootherData {
     time: string;
     [key: string]: number | string;
 }
 
-const AnalysisGenerations = () => {
+const SmoothersPage = () => {
     const [data, setData] = useState<SmootherData[]>([]);
     const [loading, setLoading] = useState(false);
     const [intervalValue, setIntervalValue] = useState(1);
@@ -38,22 +36,34 @@ const AnalysisGenerations = () => {
     });
 
     const colors = {
-        original: '#2563eb',  // Azul
-        smoothed: 'red'   // Morado
+        // original: '#489DF7',
+        // smoothed: 'red'
 
+        original: '#17BECF',
+        smoothed: '#FF2700'
     };
+
+    //     #FF7F0E (Naranja brillante) – RGB: 255, 127, 14
+    //     #17BECF (Cian claro) – RGB: 23, 190, 207
+    //
+    //     #FFD700 (Amarillo dorado) – RGB: 255, 215, 0
+    //     #98DF8A (Verde lima) – RGB: 152, 223, 138
+    //
+    //     #FFBB78 (Naranja suave) – RGB: 255, 187, 120
+    //     #2CA02C (Verde esmeralda) – RGB: 44, 160, 44
+
 
 
     // INFO: ALGORITHMS SMOOTHER
     const algorithms = [
         { value: 'kalman', label: 'Kalman' },
         { value: 'savitzky_golay', label: 'Savitzky Golay' },
-        { value: 'whittacker', label: 'Whittaker' }
+        { value: 'whittaker', label: 'Whittaker' }
     ];
 
     const [kalmanParams, setKalmanParams] = useState({
         initial_error: 1,
-        measurement_variance: 1,
+        measurement_variance: 10,
         process_variance: 0.1,
         transition_matrix: 1,
         observation_matrix: 1
@@ -61,7 +71,7 @@ const AnalysisGenerations = () => {
 
 
     const [savParams, setSavParams] = useState({
-        window_length: 11,
+        window_length: 21,
         polyorder: 2
     });
 
@@ -99,7 +109,7 @@ const AnalysisGenerations = () => {
             const algorithmParams = {
                 kalman: kalmanParams,
                 savitzky_golay: savParams,
-                whittacker: whitParams
+                whittaker: whitParams
             }[selectedAlgorithm];
 
             const params = {
@@ -196,7 +206,7 @@ const AnalysisGenerations = () => {
                         </div>
                     </div>
                 );
-            case 'whittacker':
+            case 'whittaker':
                 return (
                     <div className={styles.parameterGroup}>
                         <h4>Parámetros Whittaker</h4>
@@ -389,10 +399,11 @@ const AnalysisGenerations = () => {
                 {loading ? (
                     <div className={styles.loading}>Cargando datos...</div>
                 ) : (
-                    <ResponsiveContainer width="100%" height={500}>
+                    // Tamaño de cuadro donde va a estar la grafica
+                    <ResponsiveContainer width="100%" height={550}>
                         <LineChart
                             data={data}
-                            margin={{ top: 20, bottom: 30 }}
+                            margin={{ top: 20, bottom: 40 }} // Ajusta el tamaño de la grafica dentro del <ResponsiveContainer>
                         >
                             <Legend
                                 verticalAlign="top"
@@ -409,13 +420,14 @@ const AnalysisGenerations = () => {
                                 tickFormatter={formatXAxisTick}
                                 textAnchor={isSingleDay ? 'end' : 'middle'}
                                 interval={isSingleDay ? 38 : Math.ceil(data.length / intervalValue)} // Reducir densidad de etiquetas en múltiples días
-                                tick={{ fontSize: 12 }}
+                                tick={{ fontSize: 14.8, fill: 'white' }}
                             ></XAxis>
                             <YAxis
                                 domain={['auto', 'auto']}
                                 unit={INDICATOR_UNITS[selectedIndicator]}
                                 width={80}
                                 tickFormatter={(value) => `${value}`}
+                                tick={{ fill: 'white' }}
                             ></YAxis>
                             <Tooltip></Tooltip>
 
@@ -424,7 +436,7 @@ const AnalysisGenerations = () => {
                                 <Line type="monotone"
                                     dataKey={`original_${selectedIndicator}_${selectedValue}`}
                                     stroke={colors.original}
-                                    name={`Original ${selectedIndicator.replace('_', ' ')} ${selectedValue}`}
+                                    name={`Original ${selectedIndicator.replace('_', ' ')} - Fase ${selectedValue}`}
                                     dot={false}
                                 ></Line>
                             )}
@@ -434,7 +446,7 @@ const AnalysisGenerations = () => {
                                 <Line type="monotone"
                                     dataKey={`smoothed_${selectedIndicator}_${selectedValue}`}
                                     stroke={colors.smoothed}
-                                    name={`Suavizado ${selectedIndicator.replace('_', ' ')} ${selectedValue}`}
+                                    name={`Suavizado ${selectedIndicator.replace('_', ' ')} - Fase ${selectedValue}`}
                                     strokeDasharray="5 5"
                                     dot={false}
                                 ></Line>
@@ -449,4 +461,4 @@ const AnalysisGenerations = () => {
     );
 };
 
-export default AnalysisGenerations;
+export default SmoothersPage;

@@ -3,14 +3,14 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-const DataPage = () => {
+const ManipulationPage = () => {
     const router = useRouter();
 
     useEffect(() => {
-        router.replace('/dashboard/data/indicators_visualization');
+        router.replace('/dashboard/manipulation/upload');
     }, [router]);
 
     return null;
 };
 
-export default DataPage;
+export default ManipulationPage;

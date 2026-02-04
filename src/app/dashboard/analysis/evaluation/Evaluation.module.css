@@ -1,0 +1,305 @@
+.container {
+    padding: 0;
+    max-width: 1400px;
+    margin: 0;
+}
+
+.controlsContainer {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.controlSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.controlSection h3 {
+    color: #e2e8f0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.controlGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.controlGroup label {
+    font-weight: 500;
+    color: #cbd5e1;
+    font-size: 0.9rem;
+}
+
+.controlGroup select,
+.controlGroup input {
+    padding: 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    width: 100%;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: #cbd5e1;
+    transition: border-color 0.2s ease;
+}
+
+.controlGroup select:focus,
+.controlGroup input:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.parameterGroup {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.parameterGroup h3 {
+    color: #cbd5e1;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.parameterGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.parameterItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.parameterItem label {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.parameterItem input {
+    padding: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: #cbd5e1;
+}
+
+.parameterItem input:focus {
+    outline: none;
+    border-color: #60a5fa;
+}
+
+.dateControls,
+.timeControls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.evaluateButton {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 1rem;
+}
+
+.evaluateButton:hover:not(:disabled) {
+    background-color: #2563eb;
+}
+
+.evaluateButton:disabled {
+    background-color: #64748b;
+    cursor: not-allowed;
+}
+
+.loadingContainer {
+    text-align: center;
+    padding: 3rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.loadingContainer p {
+    color: #cbd5e1;
+}
+
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top: 4px solid #3b82f6;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.errorContainer {
+    background: rgba(220, 38, 38, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(220, 38, 38, 0.4);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+.errorMessage {
+    color: #fca5a5;
+    font-weight: 500;
+    text-align: center;
+}
+
+.metricsContainer {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+}
+
+.metricsHeader {
+    margin-bottom: 2rem;
+}
+
+.metricsHeader h2 {
+    color: #e2e8f0;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.metricsInfo {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.metricsInfo span strong {
+    color: #cbd5e1;
+}
+
+.metricsTable {
+    margin-bottom: 2rem;
+    overflow-x: auto;
+}
+
+.metricsTable table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.metricsTable th,
+.metricsTable td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+}
+
+.metricsTable th {
+    background: rgba(255, 255, 255, 0.05);
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+}
+
+.metricName {
+    font-weight: 500;
+    color: #cbd5e1;
+    min-width: 150px;
+}
+
+.metricValue {
+    font-family: 'Courier New', monospace;
+    color: #e2e8f0;
+    text-align: right;
+}
+
+.metricsSummary {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.metricsSummary h3 {
+    color: #cbd5e1;
+    margin-bottom: 1rem;
+}
+
+.metricsSummary p {
+    color: #94a3b8;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.metricsSummary strong {
+    color: #e2e8f0;
+}
+
+.summaryStats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.phaseSummary {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.phaseSummary h4 {
+    color: #3b82f6;
+    margin-bottom: 0.5rem;
+}
+
+.phaseSummary p {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    margin: 0.3rem 0;
+}

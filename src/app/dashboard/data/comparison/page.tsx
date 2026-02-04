@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import axios from 'axios';
-import styles from './OperationsGeneration.module.css';
+import styles from './comparison.module.css';
 import { API_URL, BLOCKS, DEFAULT_DATE_RANGE, INDICATORS } from '@/lib/constants';
 
 interface OperationData {
@@ -92,7 +92,7 @@ const OperationsGeneration = () => {
     };
 
     return (
-        <div className="main-container">
+        <div>
             <div className={styles.header}>
                 <h1>Comparación de Operaciones</h1>
                 <button onClick={addComparisonBlock} className={styles.addButton}>

@@ -1,7 +1,5 @@
-import { redirect } from 'next/navigation';
-import { verifyAuth } from '@/lib/auth';
+import HomePage from './home/page';
 
-export default async function Home() {
-    const { isAuthenticated } = await verifyAuth();
-    redirect(isAuthenticated ? '/dashboard' : '/login');
+export default function Home() {
+  return <HomePage />;
 }
