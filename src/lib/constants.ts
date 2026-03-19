@@ -1,8 +1,13 @@
 export const API_URL = 'http://localhost:5000/api';
-export const RESOLUTIONS = ['minute', 'hour'];
+export const RESOLUTIONS = ['minute', '10min', 'hour'];
 export const INDICATORS = ['voltage', 'current', 'active_power', 'reactive_power', 'power_factor'];
 export const BLOCKS = ['blq_a', 'blq_f'];
 export const VALUES = ['value_1', 'value_2', 'value_3'];
+export const VALUE_LABELS: { [key: string]: string } = {
+    value_1: 'Phase 1',
+    value_2: 'Phase 2',
+    value_3: 'Phase 3'
+};
 export const INDICATOR_UNITS: { [key: string]: string } = {
     voltage: 'V',
     current: 'A',
@@ -16,8 +21,8 @@ export const DEFAULT_DATE_RANGE = {
 };
 
 export const CLIMATE_VARIABLES = [
-  { value: 'temperature', label: 'Temperatura (°C)' },
-  { value: 'relative_humidity', label: 'Humedad relativa (%)' },
-  { value: 'direct_radiation', label: 'Radiación directa (W/m²)' },
-  { value: 'precipitation', label: 'Precipitación (mm)' },
+  { value: 'temperature', label: 'Temperature (°C)' },
+  { value: 'relative_humidity', label: 'Relative Humidity (%)' },
+  { value: 'direct_radiation', label: 'Direct Radiation' },
+  { value: 'precipitation', label: 'Precipitation (mm)' },
 ];

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 import styles from './visualization.module.css';
-import { API_URL, BLOCKS, DEFAULT_DATE_RANGE, INDICATOR_UNITS, INDICATORS, RESOLUTIONS, VALUES } from '@/lib/constants';
+import { API_URL, BLOCKS, DEFAULT_DATE_RANGE, INDICATOR_UNITS, INDICATORS, RESOLUTIONS, VALUES, VALUE_LABELS } from '@/lib/constants';
 import { convertTimeToMinutes, convertMinutesToTime } from '../../../../lib/utils';
 
 interface ChartData {
@@ -129,7 +129,7 @@ const DataGeneration = () => {
                 {/* Columna 1 */}
                 <div className={styles.column1}>
                     <div className={styles.controlGroup}>
-                        <label>Bloque</label>
+                        <label>Block</label>
                         <select value={selectedBlock}
                             onChange={(e) => setSelectedBlock(e.target.value)}
                         >
@@ -139,7 +139,7 @@ const DataGeneration = () => {
                         </select>
                     </div>
                     <div className={styles.controlGroup}>
-                        <label>Indicador</label>
+                        <label>Indicator</label>
                         <select value={selectedIndicator}
                             onChange={(e) => setSelectedIndicator(e.target.value)}
                         >
@@ -149,7 +149,7 @@ const DataGeneration = () => {
                         </select>
                     </div>
                     <div className={styles.controlGroup}>
-                        <label>Resolución</label>
+                        <label>Resolution</label>
                         <select value={resolution}
                             onChange={(e) => setResolution(e.target.value)}
                         >
@@ -158,7 +158,7 @@ const DataGeneration = () => {
                         </select>
                     </div>
                     <div className={styles.controlGroup}>
-                        <label>Valores a Mostrar</label>
+                        <label>Values to Display</label>
                         <div className={styles.checkboxGroup}>
                             {values.map(value => (
                                 <label key={value} className={styles.checkboxLabel}>
@@ -171,7 +171,7 @@ const DataGeneration = () => {
                                             setSelectedValues(newSelection);
                                         }}
                                     />
-                                    <span>{value.replace('_', ' ').toUpperCase()}</span>
+                                    <span>{VALUE_LABELS[value]}</span>
                                 </label>
                             ))}
                         </div>
@@ -182,14 +182,14 @@ const DataGeneration = () => {
                 <div className={styles.column2}>
                     <div className={styles.dateControls}>
                         <div className={styles.controlGroup}>
-                            <label>Fecha Inicio</label>
+                            <label>Start Date</label>
                             <input type="date"
                                 value={dateRange.start}
                                 onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
                             />
                         </div>
                         <div className={styles.controlGroup}>
-                            <label>Fecha Fin</label>
+                            <label>End Date</label>
                             <input type="date"
                                 value={dateRange.end}
                                 onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
@@ -202,7 +202,7 @@ const DataGeneration = () => {
                 <div className={styles.column3}>
                     <div className={styles.timeRangeControls}>
                         <div className="form-group">
-                            <label className="form-label">Hora Inicio</label>
+                            <label className="form-label">Start Time</label>
                             <input
                                 type="time"
                                 className="form-input"
@@ -211,7 +211,7 @@ const DataGeneration = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label className="form-label">Hora Fin</label>
+                            <label className="form-label">End Time</label>
                             <input
                                 type="time"
                                 className="form-input"
@@ -237,7 +237,7 @@ const DataGeneration = () => {
                         />
                     </div>
                     <div className={styles.controlGroup}>
-                        <label>Intervalo (Días múltiples)</label>
+                        <label>Interval (Multiple Days)</label>
                         <input
                             type="number"
                             min="1"
@@ -289,6 +289,7 @@ const DataGeneration = () => {
                                 <Line key={value}
                                     type="monotone"
                                     dataKey={value}
+                                    name={VALUE_LABELS[value]}
                                     stroke={generateLineColors()[index]}
                                     strokeWidth={2}
                                     dot={false}

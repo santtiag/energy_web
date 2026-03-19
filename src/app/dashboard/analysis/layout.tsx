@@ -8,7 +8,7 @@ const analysisTabs = [
     { label: 'Smoothers', path: '/dashboard/analysis/smoothers' },
     { label: 'Evaluation', path: '/dashboard/analysis/evaluation' },
     { label: 'Predictions', path: '/dashboard/analysis/predictions' },
-    // { label: 'Comparison', path: '/dashboard/data/comparison' },
+    { label: 'About', path: '/dashboard/analysis/about' },
 ];
 
 export default function AnalysisLayout({

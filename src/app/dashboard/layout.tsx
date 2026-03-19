@@ -37,7 +37,7 @@ export default function DashboardLayout({
             <div className={styles.dashboardContainer}>
                 <nav className={`${styles.navSidebar} ${isCollapsed ? styles.collapsed : ''}`}>
                     <div className={styles.navHeader}>
-                        {isCollapsed ? 'EV' : 'Energética Vatio'}
+                        {isCollapsed ? 'VL' : 'Vatio Laboratory'}
                     </div>
 
                     <div className={styles.navLinks}>

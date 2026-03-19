@@ -111,7 +111,7 @@ const VariablesChart = () => {
                 {/* Columna 1 – Selección de variable y rangos de fechas */}
                 <div className={styles.column1}>
                     <div className={styles.controlGroup}>
-                        <label>Variable climática</label>
+                        <label>Climate Variable</label>
                         <select
                             value={selectedVariable}
                             onChange={(e) => setSelectedVariable(e.target.value)}
@@ -126,7 +126,7 @@ const VariablesChart = () => {
 
                     <div className={styles.dateControls}>
                         <div className={styles.controlGroup}>
-                            <label>Fecha inicio</label>
+                            <label>Start Date</label>
                             <input
                                 type="date"
                                 value={dateRange.start}
@@ -136,7 +136,7 @@ const VariablesChart = () => {
                             />
                         </div>
                         <div className={styles.controlGroup}>
-                            <label>Fecha fin</label>
+                            <label>End Date</label>
                             <input
                                 type="date"
                                 value={dateRange.end}
@@ -151,7 +151,7 @@ const VariablesChart = () => {
                 {/* Columna 2 – Rango de horas */}
                 <div className={styles.column2}>
                     <div className={styles.controlGroup}>
-                        <label>Hora inicio</label>
+                        <label>Start Time</label>
                         <input
                             type="time"
                             value={timeRange.startHour}
@@ -161,7 +161,7 @@ const VariablesChart = () => {
                         />
                     </div>
                     <div className={styles.controlGroup}>
-                        <label>Hora fin</label>
+                        <label>End Time</label>
                         <input
                             type="time"
                             value={timeRange.endHour}
@@ -208,7 +208,7 @@ const VariablesChart = () => {
 
                     {/* Intervalo visual (solo afecta al eje X) */}
                     <div className={styles.controlGroup}>
-                        <label>Intervalo (días múltiples)</label>
+                        <label>Interval (Multiple Days)</label>
                         <input
                             type="number"
                             min="1"

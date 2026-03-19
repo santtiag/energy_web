@@ -4,6 +4,96 @@
     margin: 0;
 }
 
+.checkboxGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.checkboxGroup label:first-child {
+    font-weight: 500;
+    color: #cbd5e1;
+    font-size: 0.9rem;
+}
+
+.checkboxContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+.checkboxLabel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.checkboxLabel input[type="checkbox"] {
+    accent-color: #3b82f6;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.parameterSection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.paramsSection {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 2rem;
+}
+
+.paramsSection h2 {
+    color: #e2e8f0;
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.columnHeader {
+    font-weight: 600;
+    color: #cbd5e1;
+    font-size: 0.75rem;
+    text-align: center;
+    white-space: nowrap;
+    padding: 0.75rem 0.25rem;
+    min-width: 120px;
+}
+
+.columnHeader::after {
+    content: '';
+    display: block;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin-top: 0.5rem;
+}
+
+.bestValue {
+    font-weight: 700;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.15);
+}
+
 .controlsContainer {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
@@ -219,20 +309,28 @@
 .metricsTable {
     margin-bottom: 2rem;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .metricsTable table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9rem;
+    table-layout: fixed;
+    min-width: 800px;
 }
 
 .metricsTable th,
 .metricsTable td {
-    padding: 1rem;
+    padding: 0.75rem 0.5rem;
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     color: #cbd5e1;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .metricsTable th {
@@ -240,66 +338,34 @@
     font-weight: 600;
     color: #94a3b8;
     text-transform: uppercase;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     letter-spacing: 0.05em;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.75rem 0.25rem;
+    min-width: 120px;
 }
 
 .metricName {
     font-weight: 500;
     color: #cbd5e1;
-    min-width: 150px;
+    min-width: 180px;
+    width: 180px;
+    position: sticky;
+    left: 0;
+    background: rgba(30, 41, 59, 0.95);
+    z-index: 10;
+    text-align: left;
+    padding: 0.75rem 0.5rem;
 }
 
 .metricValue {
     font-family: 'Courier New', monospace;
     color: #e2e8f0;
     text-align: right;
-}
-
-.metricsSummary {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    border-radius: 8px;
-    padding: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.metricsSummary h3 {
-    color: #cbd5e1;
-    margin-bottom: 1rem;
-}
-
-.metricsSummary p {
-    color: #94a3b8;
-    margin-bottom: 1rem;
-    line-height: 1.5;
-}
-
-.metricsSummary strong {
-    color: #e2e8f0;
-}
-
-.summaryStats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.phaseSummary {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 1rem;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.phaseSummary h4 {
-    color: #3b82f6;
-    margin-bottom: 0.5rem;
-}
-
-.phaseSummary p {
-    color: #cbd5e1;
-    font-size: 0.9rem;
-    margin: 0.3rem 0;
+    padding: 0.5rem 0.25rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

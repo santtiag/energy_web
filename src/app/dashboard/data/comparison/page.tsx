@@ -96,7 +96,7 @@ const OperationsGeneration = () => {
             <div className={styles.header}>
                 <h1>Comparación de Operaciones</h1>
                 <button onClick={addComparisonBlock} className={styles.addButton}>
-                    + Añadir Bloque
+                    + Add Block
                 </button>
             </div>
 
@@ -104,7 +104,7 @@ const OperationsGeneration = () => {
                 {comparisonBlocks.map((block, index) => (
                     <div key={block.id} className={styles.comparisonBlock}>
                         <div className={styles.blockHeader}>
-                            <h3>Bloque de Comparación #{index + 1}</h3>
+                            <h3>Comparison Block #{index + 1}</h3>
                             {comparisonBlocks.length > 1 && (
                                 <button
                                     onClick={() => removeBlock(block.id)}
@@ -117,7 +117,7 @@ const OperationsGeneration = () => {
 
                         <div className={styles.controlsGrid}>
                             <div className={styles.controlGroup}>
-                                <label>Bloque</label>
+                                <label>Block</label>
                                 <select value={block.block}
                                     onChange={(e) => updateBlock(block.id, 'block', e.target.value)}
                                 >
@@ -128,7 +128,7 @@ const OperationsGeneration = () => {
                             </div>
 
                             <div className={styles.controlGroup}>
-                                <label>Indicador</label>
+                                <label>Indicator</label>
                                 <select value={block.indicator}
                                     onChange={(e) => updateBlock(block.id, 'indicator', e.target.value)}
                                 >
@@ -141,7 +141,7 @@ const OperationsGeneration = () => {
                             </div>
 
                             <div className={styles.controlGroup}>
-                                <label>Operación</label>
+                                <label>Operation</label>
                                 <select value={block.operation}
                                     onChange={(e) => updateBlock(block.id, 'operation', e.target.value)}
                                 >
@@ -154,7 +154,7 @@ const OperationsGeneration = () => {
                             </div>
 
                             <div className={styles.controlGroup}>
-                                <label>Fecha Inicio</label>
+                                <label>Start Date</label>
                                 <input type="date"
                                     value={block.startDate}
                                     onChange={(e) => updateBlock(block.id, 'startDate', e.target.value)}
@@ -162,7 +162,7 @@ const OperationsGeneration = () => {
                             </div>
 
                             <div className={styles.controlGroup}>
-                                <label>Fecha Fin</label>
+                                <label>End Date</label>
                                 <input type="date"
                                     value={block.endDate}
                                     onChange={(e) => updateBlock(block.id, 'endDate', e.target.value)}
@@ -174,7 +174,7 @@ const OperationsGeneration = () => {
                                 className={styles.fetchButton}
                                 disabled={loading[block.id]}
                             >
-                                {loading[block.id] ? 'Cargando...' : 'Actualizar Datos'}
+                                {loading[block.id] ? 'Cargando...' : 'Update Data'}
                             </button>
                         </div>
 
