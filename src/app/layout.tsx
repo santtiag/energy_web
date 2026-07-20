@@ -1,14 +1,26 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Fraunces, Public_Sans } from 'next/font/google';
 import { AuthProvider } from '@/context/AuthContext';
+import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import '@/styles/globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+const fraunces = Fraunces({
+    subsets: ['latin'],
+    variable: '--font-fraunces',
+    axes: ['opsz'],
+});
+
+const publicSans = Public_Sans({
+    subsets: ['latin'],
+    variable: '--font-public-sans',
+});
 
 export const metadata: Metadata = {
     title: 'Energy Analytics',
     description: 'Sistema de monitoreo energético',
 };
+
+const themeInitScript = `(function(){try{var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark')}catch(e){}})()`;
 
 export default function RootLayout({
     children,
@@ -16,9 +28,14 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="es">
-            <body className={inter.className}>
-                <AuthProvider>{children}</AuthProvider>
+        <html lang="es" suppressHydrationWarning>
+            <head>
+                <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+            </head>
+            <body className={`${fraunces.variable} ${publicSans.variable} font-sans`}>
+                <AuthProvider>
+                    <ThemeProvider>{children}</ThemeProvider>
+                </AuthProvider>
             </body>
         </html>
     );

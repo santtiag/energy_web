@@ -1,16 +1,5 @@
-'use client';
+import { redirect } from 'next/navigation';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
-const DataPage = () => {
-    const router = useRouter();
-
-    useEffect(() => {
-        router.replace('/dashboard/data/indicators_visualization');
-    }, [router]);
-
-    return null;
-};
-
-export default DataPage;
+export default function DataPage() {
+    redirect('/dashboard/data/indicators_visualization');
+}

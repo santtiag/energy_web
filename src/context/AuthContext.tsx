@@ -13,7 +13,7 @@ type AuthContextType = {
 const AuthContext = createContext < AuthContextType > ({} as AuthContextType);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [token, setToken] = useState(null);
+    const [token, setToken] = useState<string | null>(null);
     const router = useRouter();
 
     useEffect(() => {

@@ -1,9 +1,11 @@
 'use client';
-
 import { useState } from 'react';
 import axios from 'axios';
-import styles from './comparison.module.css';
-import { API_URL, BLOCKS, DEFAULT_DATE_RANGE, INDICATORS } from '@/lib/constants';
+import { X } from 'lucide-react';
+import DateRangeControl from '@/components/controls/DateRangeControl';
+import SelectField from '@/components/controls/SelectField';
+import { API_URL, BLOCKS, DEFAULT_DATE_RANGE, INDICATOR_UNITS, INDICATORS } from '@/lib/constants';
+import { formatIndicatorLabel } from '@/lib/format';
 
 interface OperationData {
     [key: string]: string | number;
@@ -18,202 +20,205 @@ interface ComparisonBlock {
     startDate: string;
     endDate: string;
     data?: OperationData[];
+    error?: boolean;
 }
 
-const OperationsGeneration = () => {
+const OPERATIONS = [
+    { value: 'maximus', label: 'Máximos' },
+    { value: 'lows', label: 'Mínimos' },
+    { value: 'average', label: 'Promedios' },
+];
+
+export default function ComparisonPage() {
     const [comparisonBlocks, setComparisonBlocks] = useState<ComparisonBlock[]>([
         {
             id: Date.now(),
             block: BLOCKS[0],
             indicator: INDICATORS[0],
             operation: 'maximus',
-            startDate: DEFAULT_DATE_RANGE['start'],
-            endDate: DEFAULT_DATE_RANGE['end']
-        }
+            startDate: DEFAULT_DATE_RANGE.start,
+            endDate: DEFAULT_DATE_RANGE.end,
+        },
     ]);
-
     const [loading, setLoading] = useState<{ [key: number]: boolean }>({});
-
-    const indicators = INDICATORS;
-    const blocks = BLOCKS;
-    const operations = [
-        { value: 'maximus', label: 'Máximos' },
-        { value: 'lows', label: 'Mínimos' },
-        { value: 'average', label: 'Promedios' }
-    ];
 
     const fetchOperationData = async (block: ComparisonBlock) => {
         setLoading(prev => ({ ...prev, [block.id]: true }));
-
         try {
-            const response = await axios.get(
-                `${API_URL}/operations/${block.operation}/`, {
+            const response = await axios.get(`${API_URL}/operations/${block.operation}/`, {
                 params: {
                     start_date: block.startDate,
                     end_date: block.endDate,
                     indicator: block.indicator,
-                    table_name: block.block
-                }
+                    table_name: block.block,
+                },
             });
-
-            const updatedBlocks = comparisonBlocks.map(b =>
-                b.id === block.id ? { ...b, data: response.data } : b
+            setComparisonBlocks(prev =>
+                prev.map(b =>
+                    b.id === block.id ? { ...b, data: response.data, error: false } : b
+                )
             );
-
-            setComparisonBlocks(updatedBlocks);
         } catch (error) {
             console.error('Error fetching data:', error);
+            setComparisonBlocks(prev =>
+                prev.map(b => (b.id === block.id ? { ...b, data: undefined, error: true } : b))
+            );
         } finally {
             setLoading(prev => ({ ...prev, [block.id]: false }));
         }
     };
 
     const addComparisonBlock = () => {
-        const newBlock: ComparisonBlock = {
-            id: Date.now(),
-            block: BLOCKS[0],
-            indicator: INDICATORS[0],
-            operation: 'maximus',
-            startDate: comparisonBlocks[0].startDate,
-            endDate: comparisonBlocks[0].endDate
-        };
-        setComparisonBlocks([...comparisonBlocks, newBlock]);
+        setComparisonBlocks(prev => [
+            ...prev,
+            {
+                id: Date.now(),
+                block: BLOCKS[0],
+                indicator: INDICATORS[0],
+                operation: 'maximus',
+                startDate: prev[0]?.startDate ?? DEFAULT_DATE_RANGE.start,
+                endDate: prev[0]?.endDate ?? DEFAULT_DATE_RANGE.end,
+            },
+        ]);
     };
 
     const updateBlock = (id: number, field: string, value: string) => {
-        const updatedBlocks = comparisonBlocks.map(block =>
-            block.id === id ? { ...block, [field]: value } : block
+        setComparisonBlocks(prev =>
+            prev.map(block => (block.id === id ? { ...block, [field]: value } : block))
         );
-        setComparisonBlocks(updatedBlocks);
     };
 
     const removeBlock = (id: number) => {
-        setComparisonBlocks(comparisonBlocks.filter(block => block.id !== id));
+        setComparisonBlocks(prev => prev.filter(block => block.id !== id));
     };
 
     return (
         <div>
-            <div className={styles.header}>
-                <h1>Comparación de Operaciones</h1>
-                <button onClick={addComparisonBlock} className={styles.addButton}>
-                    + Add Block
+            <div className="mb-8 flex flex-wrap items-baseline justify-between gap-4">
+                <h2 className="font-display text-2xl tracking-tight text-ink">
+                    Hojas de comparación
+                </h2>
+                <button
+                    type="button"
+                    onClick={addComparisonBlock}
+                    className="border-b border-accent pb-0.5 text-sm text-accent transition-opacity hover:opacity-70"
+                >
+                    + Añadir bloque
                 </button>
             </div>
 
-            <div className={styles.comparisonContainer}>
+            <div className="space-y-6">
                 {comparisonBlocks.map((block, index) => (
-                    <div key={block.id} className={styles.comparisonBlock}>
-                        <div className={styles.blockHeader}>
-                            <h3>Comparison Block #{index + 1}</h3>
+                    <article key={block.id} className="border border-line bg-surface p-6">
+                        <div className="mb-5 flex items-baseline justify-between">
+                            <p className="text-[11px] uppercase tracking-[0.18em] text-ink-faint">
+                                <span className="font-display">#{String(index + 1).padStart(2, '0')}</span>{' '}
+                                · Bloque de comparación
+                            </p>
                             {comparisonBlocks.length > 1 && (
                                 <button
+                                    type="button"
                                     onClick={() => removeBlock(block.id)}
-                                    className={styles.removeButton}
+                                    aria-label={`Eliminar bloque ${index + 1}`}
+                                    className="text-ink-faint transition-colors hover:text-negative"
                                 >
-                                    ×
+                                    <X className="size-4" />
                                 </button>
                             )}
                         </div>
 
-                        <div className={styles.controlsGrid}>
-                            <div className={styles.controlGroup}>
-                                <label>Block</label>
-                                <select value={block.block}
-                                    onChange={(e) => updateBlock(block.id, 'block', e.target.value)}
-                                >
-                                    {blocks.map(b => (
-                                        <option key={b} value={b}>{b.toUpperCase()}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className={styles.controlGroup}>
-                                <label>Indicator</label>
-                                <select value={block.indicator}
-                                    onChange={(e) => updateBlock(block.id, 'indicator', e.target.value)}
-                                >
-                                    {indicators.map(ind => (
-                                        <option key={ind} value={ind}>
-                                            {ind.replace('_', ' ').toUpperCase()}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className={styles.controlGroup}>
-                                <label>Operation</label>
-                                <select value={block.operation}
-                                    onChange={(e) => updateBlock(block.id, 'operation', e.target.value)}
-                                >
-                                    {operations.map(op => (
-                                        <option key={op.value} value={op.value}>
-                                            {op.label}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className={styles.controlGroup}>
-                                <label>Start Date</label>
-                                <input type="date"
-                                    value={block.startDate}
-                                    onChange={(e) => updateBlock(block.id, 'startDate', e.target.value)}
+                        <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-5">
+                            <SelectField
+                                label="Bloque"
+                                value={block.block}
+                                onChange={v => updateBlock(block.id, 'block', v)}
+                                options={BLOCKS.map(b => ({ value: b, label: b.toUpperCase() }))}
+                            />
+                            <SelectField
+                                label="Indicador"
+                                value={block.indicator}
+                                onChange={v => updateBlock(block.id, 'indicator', v)}
+                                options={INDICATORS.map(i => ({
+                                    value: i,
+                                    label: formatIndicatorLabel(i),
+                                }))}
+                            />
+                            <SelectField
+                                label="Operación"
+                                value={block.operation}
+                                onChange={v => updateBlock(block.id, 'operation', v)}
+                                options={OPERATIONS}
+                            />
+                            <div className="md:col-span-2">
+                                <DateRangeControl
+                                    value={{ start: block.startDate, end: block.endDate }}
+                                    onChange={({ start, end }) => {
+                                        setComparisonBlocks(prev =>
+                                            prev.map(b =>
+                                                b.id === block.id
+                                                    ? { ...b, startDate: start, endDate: end }
+                                                    : b
+                                            )
+                                        );
+                                    }}
                                 />
                             </div>
-
-                            <div className={styles.controlGroup}>
-                                <label>End Date</label>
-                                <input type="date"
-                                    value={block.endDate}
-                                    onChange={(e) => updateBlock(block.id, 'endDate', e.target.value)}
-                                />
-                            </div>
-
-                            <button
-                                onClick={() => fetchOperationData(block)}
-                                className={styles.fetchButton}
-                                disabled={loading[block.id]}
-                            >
-                                {loading[block.id] ? 'Cargando...' : 'Update Data'}
-                            </button>
                         </div>
 
+                        <button
+                            type="button"
+                            onClick={() => fetchOperationData(block)}
+                            disabled={loading[block.id]}
+                            className="mt-5 h-9 bg-ink px-5 text-sm text-background transition-colors hover:bg-accent disabled:opacity-40"
+                        >
+                            {loading[block.id] ? 'Consultando…' : 'Actualizar'}
+                        </button>
+
+                        {block.error && (
+                            <p className="mt-4 text-sm text-negative">
+                                Sin conexión — no se pudo consultar la operación.
+                            </p>
+                        )}
+
                         {block.data?.map((data, dataIndex) => (
-                            <div key={dataIndex} className={styles.resultsCard}>
-                                <h4>{data.indicator_name.replace('_', ' ').toUpperCase()}</h4>
-                                <div className={styles.valuesGrid}>
+                            <div key={dataIndex} className="mt-6 border-t border-line pt-5">
+                                <p className="text-[11px] uppercase tracking-[0.18em] text-ink-faint">
+                                    {formatIndicatorLabel(data.indicator_name)}
+                                </p>
+                                <div className="mt-4 grid gap-6 sm:grid-cols-3">
                                     {Object.entries(data)
                                         .filter(([key]) => key.includes('value_'))
-                                        .map(([key, value]) => (
-                                            <div key={key} className={styles.valueItem}>
-                                                <div className={styles.valueHeader}>
-                                                    <span>{key.replace(/_/g, ' ').toUpperCase()}</span>
-                                                    <span className={styles.valueUnit}>
-                                                        {block.indicator === 'power_factor' ? '' :
-                                                            block.indicator === 'voltage' ? 'V' :
-                                                                block.indicator === 'current' ? 'A' :
-                                                                    block.indicator === 'active_power' ? 'W' : 'VAr'}
-                                                    </span>
+                                        .map(([key, value]) => {
+                                            const phase = key.split('_').pop();
+                                            const timestamp = data[`time_${phase}`];
+                                            return (
+                                                <div key={key}>
+                                                    <p className="text-[11px] uppercase tracking-[0.12em] text-ink-faint">
+                                                        {key.replace(/_/g, ' ')}
+                                                        {INDICATOR_UNITS[block.indicator] &&
+                                                            ` · ${INDICATOR_UNITS[block.indicator]}`}
+                                                    </p>
+                                                    <p className="mt-1 font-display text-3xl tracking-tight text-ink tabular-nums">
+                                                        {typeof value === 'number'
+                                                            ? value.toFixed(3)
+                                                            : value}
+                                                    </p>
+                                                    {timestamp && (
+                                                        <p className="mt-1 text-xs text-ink-muted">
+                                                            {new Date(
+                                                                timestamp as string
+                                                            ).toLocaleString('es-ES')}
+                                                        </p>
+                                                    )}
                                                 </div>
-                                                <div className={styles.value}>
-                                                    {typeof value === 'number' ? value.toFixed(3) : value}
-                                                </div>
-                                                {data[`time_${key.split('_').pop()}`] && (
-                                                    <div className={styles.timeStamp}>
-                                                        {new Date(data[`time_${key.split('_').pop()}`] as string)
-                                                            .toLocaleString()}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                 </div>
                             </div>
                         ))}
-                    </div>
+                    </article>
                 ))}
             </div>
         </div>
     );
-};
-
-export default OperationsGeneration;
+}

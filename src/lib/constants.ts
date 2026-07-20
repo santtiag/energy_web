@@ -20,9 +20,44 @@ export const DEFAULT_DATE_RANGE = {
     end: '2025-08-17'
 };
 
+export const RESOLUTION_LABELS: { [key: string]: string } = {
+    minute: 'Minutal',
+    '10min': '10 Minutos',
+    hour: 'Horaria'
+};
+
+export const SMOOTHER_ALGORITHMS = [
+    { value: 'kalman', label: 'Kalman' },
+    { value: 'savitzky_golay', label: 'Savitzky-Golay' },
+    { value: 'whittaker', label: 'Whittaker' }
+];
+
+export const DEFAULT_KALMAN_PARAMS = {
+    initial_error: 1,
+    measurement_variance: 10,
+    process_variance: 0.1,
+    transition_matrix: 1,
+    observation_matrix: 1
+};
+
+export const DEFAULT_SAV_PARAMS = {
+    window_length: 21,
+    polyorder: 2
+};
+
+export const DEFAULT_WHIT_PARAMS = {
+    lmbd: 100,
+    d: 2
+};
+
+export const UPLOAD_ENDPOINTS = {
+    blq_a: `${API_URL}/upload_blq_a`,
+    blq_f: `${API_URL}/upload_blq_f`,
+    variables: `${API_URL}/upload_variables`
+};
+
 export const CLIMATE_VARIABLES = [
   { value: 'temperature', label: 'Temperature (°C)' },
   { value: 'relative_humidity', label: 'Relative Humidity (%)' },
-  { value: 'direct_radiation', label: 'Direct Radiation' },
   { value: 'precipitation', label: 'Precipitation (mm)' },
 ];

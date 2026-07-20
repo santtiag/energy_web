@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@types/js-cookie": "^3.0.6",
-    "@types/react-datepicker": "^6.2.0",
     "axios": "^1.8.3",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.26",
@@ -18,9 +17,7 @@
     "lucide-react": "^0.483.0",
     "next": "^15.5.9",
     "react": "^19.0.0",
-    "react-datepicker": "^8.2.1",
     "react-dom": "^19.0.0",
-    "react-icons": "^5.5.0",
     "recharts": "^2.15.4"
   },
   "devDependencies": {
@@ -28,6 +25,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5"
   }
 }
